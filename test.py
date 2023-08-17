@@ -7,30 +7,30 @@ Original file is located at
     https://colab.research.google.com/drive/109DAd5Tvbfp90pS5YAozZzDaPFtFGWw3
 """
 
-import math
-from typing import Any
 import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.express as px
 from scipy.stats import pearsonr
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error
-import numpy as np
 
 TOLERANCE = 0.001
 
 
-
+# question 1
 def plot_top_genre_counts(df):
     '''
     Intake a dataframe and return the visualization of genres of top 30 songs
     in 2019 and 2018.
     '''
     df_cleaned = df.dropna()
-    df_tracks = df_cleaned[(df_cleaned['year'] == 2019) | (df_cleaned['year'] == 2018)]
-    top_popular = df_tracks[df_tracks['popularity'] > 0].sort_values(by='popularity', ascending=False).head(30)
-    genre_counts = top_popular.groupby('the genre of the track').size().sort_values(ascending=False)
+    n = df_cleaned['year'] == 2019
+    n_1 = df_cleaned['year'] == 2018
+    df_tracks = df_cleaned[n | n_1]
+    n_2 = df_tracks['popularity'] > 0
+    top_popular = df_tracks[n_2].sort_values(by='popularity',
+                                             ascending=False).head(30)
+    genre_counts = top_popular.groupby('the genre of the track').size(
+                                        ).sort_values(
+                                       ascending=False)
     plt.bar(genre_counts.index, genre_counts.values)
     plt.xlabel('Genre')
     plt.ylabel('Count')
@@ -39,35 +39,45 @@ def plot_top_genre_counts(df):
     plt.tight_layout()
     plt.show()
 
+
 # question 2
+
+# correlation visualization
+
 def create_scatter_plot(df, x_column, y_column):
     '''
-    Plot the visualization of correlation between different features of a song with popularity.
+    Plot the visualization of correlation between different
+    features of a song with popularity.
     '''
     fig = px.scatter(df, x=x_column, y=y_column, color=y_column, size=y_column)
     fig.show()
 
 
+# correlation coefficient
 def calculate_correlations(df, target_column, feature_columns):
     '''
-    Return correlation coefficient between different music features and popularity.
+    Return correlation coefficient between different music
+    features and popularity.
     '''
     correlations = {}
     df_cleaned = df.dropna()
     for column in feature_columns:
-        correlation, _ = pearsonr(df_cleaned[target_column], df_cleaned[column])
+        correlation, _ = pearsonr(df_cleaned[target_column],
+                                  df_cleaned[column])
         correlations[column] = correlation
+
     return correlations
 
-
 # question3
-#top 10 in 2019 and 2010
+
+
 def plot_top_songs(df, year):
     '''
     Plot top 10 most popular songs in 2019 and 2010.
     '''
     df_filtered = df.query(f'year <= {year}')
-    top_songs = df_filtered.sort_values(by='popularity', ascending=False).head(10)
+    top_songs = df_filtered.sort_values(by='popularity',
+                                        ascending=False).head(10)
 
     plt.figure(figsize=(10, 6))
     plt.plot(top_songs['title'], top_songs['popularity'], marker='o')
@@ -96,7 +106,6 @@ def plot_explicit_by_continent(df_country):
     plt.show()
 
 
-
 def test_plot_top_genre_counts(df):
     '''
     Test the plot_top_genre_counts function.
@@ -118,13 +127,11 @@ def test_plot_top_songs(df, year):
     plot_top_songs(df, year)
 
 
-
 def test_plot_explicit_by_continent(df_country):
     '''
     Test the plot_explicit_by_continent function.
     '''
     plot_explicit_by_continent(df_country)
-
 
 
 def main():
@@ -140,7 +147,6 @@ def main():
     test_create_scatter_plot(test_data, x_column, y_column)
     test_plot_top_songs(test_data, year)
     test_plot_explicit_by_continent(test_data_country)
-
 
 
 if __name__ == '__main__':
