@@ -20,9 +20,15 @@ def plot_top_genre_counts(df):
     in 2019 and 2018.
     '''
     df_cleaned = df.dropna()
-    df_tracks = df_cleaned[(df_cleaned['year'] == 2019) | (df_cleaned['year'] == 2018)]
-    top_popular = df_tracks[df_tracks['popularity'] > 0].sort_values(by='popularity', ascending=False).head(30)
-    genre_counts = top_popular.groupby('the genre of the track').size().sort_values(ascending=False)
+    n = df_cleaned['year'] == 2019
+    n_1 = df_cleaned['year'] == 2018
+    df_tracks = df_cleaned[n | n_1]
+    n_2 = df_tracks['popularity'] > 0
+    top_popular = df_tracks[n_2].sort_values(by='popularity',
+                                             ascending=False).head(30)
+    genre_counts = top_popular.groupby('the genre of the track').size(
+                                        ).sort_values(
+                                       ascending=False)
     plt.bar(genre_counts.index, genre_counts.values)
     plt.xlabel('Genre')
     plt.ylabel('Count')
@@ -38,7 +44,8 @@ def plot_top_genre_counts(df):
 
 def create_scatter_plot(df, x_column, y_column):
     '''
-    Plot the visualization of correlation between different features of a song with popularity.
+    Plot the visualization of correlation between different
+    features of a song with popularity.
     '''
     fig = px.scatter(df, x=x_column, y=y_column, color=y_column, size=y_column)
     fig.show()
@@ -47,25 +54,28 @@ def create_scatter_plot(df, x_column, y_column):
 # correlation coefficient
 def calculate_correlations(df, target_column, feature_columns):
     '''
-    Return correlation coefficient between different music features and popularity.
+    Return correlation coefficient between different music
+    features and popularity.
     '''
     correlations = {}
     df_cleaned = df.dropna()
     for column in feature_columns:
-        correlation, _ = pearsonr(df_cleaned[target_column], df_cleaned[column])
+        correlation, _ = pearsonr(df_cleaned[target_column],
+                                  df_cleaned[column])
         correlations[column] = correlation
 
     return correlations
 
-
 # question3
-#top 10 in 2019 and 2010
+
+
 def plot_top_songs(df, year):
     '''
     Plot top 10 most popular songs in 2019 and 2010.
     '''
     df_filtered = df.query(f'year <= {year}')
-    top_songs = df_filtered.sort_values(by='popularity', ascending=False).head(10)
+    top_songs = df_filtered.sort_values(by='popularity',
+                                        ascending=False).head(10)
 
     plt.figure(figsize=(10, 6))
     plt.plot(top_songs['title'], top_songs['popularity'], marker='o')
@@ -94,8 +104,6 @@ def plot_explicit_by_continent(df_country):
     plt.show()
 
 
-
-
 if __name__ == '__main__':
     df = pd.read_csv('/content/top50MusicFrom2010-2019.csv')
     df_country = pd.read_csv('/content/SpotifySongsByCountry_2020.csv')
@@ -117,7 +125,8 @@ if __name__ == '__main__':
     # correlation coefficient
     target_column = 'popularity'
     feature_columns = ['danceability', 'duration', 'energy', 'loudness',
-                       'speechiness', 'acousticness', 'liveness', 'valence', 'tempo']
+                       'speechiness', 'acousticness', 'liveness',
+                       'valence', 'tempo']
 
     correlations = calculate_correlations(df, target_column, feature_columns)
 
